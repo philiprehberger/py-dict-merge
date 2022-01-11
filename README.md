@@ -41,6 +41,14 @@ merge(a, b, list_strategy="append")
 - `Strategy.ERROR` — Raise on conflict
 - List strategies: `"replace"`, `"append"`, `"unique"`, `"concat"`
 
+
+## Development
+
+```bash
+pip install -e .
+python -m pytest tests/ -v
+```
+
 ## License
 
 MIT

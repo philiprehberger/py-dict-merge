@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5
+
+- Export and document MergeConflictError in API table
+- Add Strategy.ERROR usage example to README
+- Convert API section to table format
+
 ## 0.1.4
 
 - Add Development section to README

@@ -31,15 +31,28 @@ merge(a, b, strategy=Strategy.KEEP_FIRST)
 
 # Append lists instead of replacing
 merge(a, b, list_strategy="append")
+
+# Raise on conflict
+from philiprehberger_dict_merge import MergeConflictError
+
+try:
+    merge({"key": 1}, {"key": 2}, strategy=Strategy.ERROR)
+except MergeConflictError as e:
+    print(e.key)   # "key"
+    print(e.left)  # 1
+    print(e.right) # 2
 ```
 
 ## API
 
-- `merge(*dicts, strategy=Strategy.REPLACE, list_strategy="replace")` — Deep merge
-- `Strategy.REPLACE` — Later values win (default)
-- `Strategy.KEEP_FIRST` — Earlier values win
-- `Strategy.ERROR` — Raise on conflict
-- List strategies: `"replace"`, `"append"`, `"unique"`, `"concat"`
+| Function / Class | Description |
+|------------------|-------------|
+| `merge(*dicts, strategy=Strategy.REPLACE, list_strategy="replace")` | Deep merge |
+| `Strategy.REPLACE` | Later values win (default) |
+| `Strategy.KEEP_FIRST` | Earlier values win |
+| `Strategy.ERROR` | Raise on conflict |
+| `MergeConflictError` | Raised by `Strategy.ERROR` — has `.key`, `.left`, `.right` attributes |
+| List strategies: `"replace"`, `"append"`, `"unique"`, `"concat"` | List merge modes |
 
 
 ## Development

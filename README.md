@@ -2,8 +2,7 @@
 
 [![Tests](https://github.com/philiprehberger/py-dict-merge/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-dict-merge/actions/workflows/publish.yml)
 [![PyPI version](https://img.shields.io/pypi/v/philiprehberger-dict-merge.svg)](https://pypi.org/project/philiprehberger-dict-merge/)
-[![License](https://img.shields.io/github/license/philiprehberger/py-dict-merge)](LICENSE)
-[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
+[![Last updated](https://img.shields.io/github/last-commit/philiprehberger/py-dict-merge)](https://github.com/philiprehberger/py-dict-merge/commits/main)
 
 Deep merge dictionaries safely with conflict resolution.
 
@@ -55,7 +54,6 @@ except MergeConflictError as e:
 | `MergeConflictError` | Raised by `Strategy.ERROR` — has `.key`, `.left`, `.right` attributes |
 | List strategies: `"replace"`, `"append"`, `"unique"`, `"concat"` | List merge modes |
 
-
 ## Development
 
 ```bash
@@ -63,6 +61,24 @@ pip install -e .
 python -m pytest tests/ -v
 ```
 
+## Support
+
+If you find this project useful:
+
+⭐ [Star the repo](https://github.com/philiprehberger/py-dict-merge)
+
+🐛 [Report issues](https://github.com/philiprehberger/py-dict-merge/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+
+💡 [Suggest features](https://github.com/philiprehberger/py-dict-merge/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+
+❤️ [Sponsor development](https://github.com/sponsors/philiprehberger)
+
+🌐 [All Open Source Projects](https://philiprehberger.com/open-source-packages)
+
+💻 [GitHub Profile](https://github.com/philiprehberger)
+
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/philiprehberger)
+
 ## License
 
-MIT
+[MIT](LICENSE)

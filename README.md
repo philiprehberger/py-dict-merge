@@ -1,5 +1,9 @@
 # philiprehberger-dict-merge
 
+[![Tests](https://github.com/philiprehberger/py-dict-merge/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-dict-merge/actions/workflows/publish.yml)
+[![PyPI version](https://img.shields.io/pypi/v/philiprehberger-dict-merge.svg)](https://pypi.org/project/philiprehberger-dict-merge/)
+[![License](https://img.shields.io/github/license/philiprehberger/py-dict-merge)](LICENSE)
+
 Deep merge dictionaries safely with conflict resolution.
 
 ## Installation

@@ -35,11 +35,13 @@ merge(a, b, list_strategy="append")
 
 ## API
 
-- `merge(*dicts, strategy=Strategy.REPLACE, list_strategy="replace")` — Deep merge
-- `Strategy.REPLACE` — Later values win (default)
-- `Strategy.KEEP_FIRST` — Earlier values win
-- `Strategy.ERROR` — Raise on conflict
-- List strategies: `"replace"`, `"append"`, `"unique"`, `"concat"`
+| Function / Class | Description |
+|------------------|-------------|
+| `merge(*dicts, strategy=Strategy.REPLACE, list_strategy="replace")` | Deep merge |
+| `Strategy.REPLACE` | Later values win (default) |
+| `Strategy.KEEP_FIRST` | Earlier values win |
+| `Strategy.ERROR` | Raise on conflict |
+| List strategies: `"replace"`, `"append"`, `"unique"`, `"concat"` | List merge modes |
 
 
 ## Development

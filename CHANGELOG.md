@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.5
+## 0.1.7
 
 - Export and document MergeConflictError in API table
 - Add Strategy.ERROR usage example to README

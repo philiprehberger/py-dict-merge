@@ -10,6 +10,7 @@ from typing import Any
 __all__ = [
     "merge",
     "Strategy",
+    "MergeConflictError",
 ]
 
 

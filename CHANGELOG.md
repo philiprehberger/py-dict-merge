@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0 (2026-04-27)
+
+- Add `Strategy.CALLBACK` and `on_conflict` callable parameter to `merge()` for custom per-key conflict resolution
+- Callback receives the dotted full key path (e.g. `"db.host"`) along with the conflicting left/right values
+
 ## 0.1.9 (2026-03-31)
 
 - Standardize README to 3-badge format with emoji Support section

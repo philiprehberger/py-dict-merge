@@ -41,6 +41,15 @@ except MergeConflictError as e:
     print(e.key)   # "key"
     print(e.left)  # 1
     print(e.right) # 2
+
+# Custom resolution per key
+merge(
+    {"a": 1, "b": 5},
+    {"a": 4, "b": 2},
+    strategy=Strategy.CALLBACK,
+    on_conflict=lambda key, left, right: max(left, right),
+)
+# {"a": 4, "b": 5}
 ```
 
 ## API
@@ -51,6 +60,7 @@ except MergeConflictError as e:
 | `Strategy.REPLACE` | Later values win (default) |
 | `Strategy.KEEP_FIRST` | Earlier values win |
 | `Strategy.ERROR` | Raise on conflict |
+| `Strategy.CALLBACK` | Resolve conflicts via `on_conflict(key, left, right)` |
 | `MergeConflictError` | Raised by `Strategy.ERROR` — has `.key`, `.left`, `.right` attributes |
 | List strategies: `"replace"`, `"append"`, `"unique"`, `"concat"` | List merge modes |
 

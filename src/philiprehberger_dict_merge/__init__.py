@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import copy
 from enum import Enum
-from typing import Any
+from typing import Any, Callable
 
 
 __all__ = [
@@ -20,6 +20,7 @@ class Strategy(Enum):
     REPLACE = "replace"
     KEEP_FIRST = "keep_first"
     ERROR = "error"
+    CALLBACK = "callback"
 
 
 class MergeConflictError(ValueError):
@@ -36,6 +37,7 @@ def merge(
     *dicts: dict[str, Any],
     strategy: Strategy = Strategy.REPLACE,
     list_strategy: str = "replace",
+    on_conflict: Callable[[str, Any, Any], Any] | None = None,
 ) -> dict[str, Any]:
     """Deep merge multiple dictionaries into a new dict.
 
@@ -47,13 +49,20 @@ def merge(
         strategy: How to handle conflicting non-dict values.
         list_strategy: How to handle list values:
             ``"replace"`` (default), ``"append"``, ``"unique"``, or ``"concat"``.
+        on_conflict: Required when *strategy* is ``Strategy.CALLBACK``. Called
+            as ``on_conflict(full_key, left, right)`` and its return value is
+            used as the merged value.
 
     Returns:
         A new merged dictionary.
 
     Raises:
         MergeConflictError: When *strategy* is ``ERROR`` and values conflict.
+        ValueError: When *strategy* is ``CALLBACK`` and *on_conflict* is None.
     """
+    if strategy is Strategy.CALLBACK and on_conflict is None:
+        raise ValueError("Strategy.CALLBACK requires an on_conflict callback")
+
     if not dicts:
         return {}
     if len(dicts) == 1:
@@ -61,7 +70,7 @@ def merge(
 
     result = copy.deepcopy(dicts[0])
     for d in dicts[1:]:
-        _merge_into(result, d, strategy, list_strategy, prefix="")
+        _merge_into(result, d, strategy, list_strategy, on_conflict, prefix="")
     return result
 
 
@@ -70,6 +79,7 @@ def _merge_into(
     source: dict[str, Any],
     strategy: Strategy,
     list_strategy: str,
+    on_conflict: Callable[[str, Any, Any], Any] | None,
     prefix: str,
 ) -> None:
     for key, source_value in source.items():
@@ -83,7 +93,7 @@ def _merge_into(
 
         # Both dicts → recurse
         if isinstance(target_value, dict) and isinstance(source_value, dict):
-            _merge_into(target_value, source_value, strategy, list_strategy, full_key)
+            _merge_into(target_value, source_value, strategy, list_strategy, on_conflict, full_key)
             continue
 
         # Both lists → apply list strategy
@@ -100,6 +110,9 @@ def _merge_into(
             case Strategy.ERROR:
                 if target_value != source_value:
                     raise MergeConflictError(full_key, target_value, source_value)
+            case Strategy.CALLBACK:
+                assert on_conflict is not None  # validated in merge()
+                target[key] = copy.deepcopy(on_conflict(full_key, target_value, source_value))
 
 
 def _merge_lists(left: list, right: list, strategy: str) -> list:

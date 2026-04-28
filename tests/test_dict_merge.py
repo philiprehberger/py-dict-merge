@@ -67,3 +67,45 @@ def test_empty_merge():
 def test_single_dict():
     result = merge({"a": 1})
     assert result == {"a": 1}
+
+
+def test_callback_picks_larger_int():
+    result = merge(
+        {"a": 1, "b": 5},
+        {"a": 4, "b": 2},
+        strategy=Strategy.CALLBACK,
+        on_conflict=lambda _key, left, right: max(left, right),
+    )
+    assert result == {"a": 4, "b": 5}
+
+
+def test_callback_receives_full_key_path():
+    seen_keys: list[str] = []
+
+    def cb(key: str, left, right):
+        seen_keys.append(key)
+        return right
+
+    merge(
+        {"db": {"host": "a", "port": 1}},
+        {"db": {"host": "b", "port": 2}},
+        strategy=Strategy.CALLBACK,
+        on_conflict=cb,
+    )
+    assert "db.host" in seen_keys
+    assert "db.port" in seen_keys
+
+
+def test_callback_can_return_complex_value():
+    result = merge(
+        {"tags": "a"},
+        {"tags": "b"},
+        strategy=Strategy.CALLBACK,
+        on_conflict=lambda _k, left, right: [left, right],
+    )
+    assert result == {"tags": ["a", "b"]}
+
+
+def test_callback_strategy_requires_callback():
+    with pytest.raises(ValueError, match="requires an on_conflict callback"):
+        merge({"a": 1}, {"a": 2}, strategy=Strategy.CALLBACK)

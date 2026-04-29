@@ -1,5 +1,11 @@
 import pytest
-from philiprehberger_dict_merge import merge, Strategy, MergeConflictError
+from philiprehberger_dict_merge import (
+    MergeConflictError,
+    Strategy,
+    flatten,
+    merge,
+    unflatten,
+)
 
 
 def test_simple_merge():
@@ -109,3 +115,65 @@ def test_callback_can_return_complex_value():
 def test_callback_strategy_requires_callback():
     with pytest.raises(ValueError, match="requires an on_conflict callback"):
         merge({"a": 1}, {"a": 2}, strategy=Strategy.CALLBACK)
+
+
+def test_flatten_simple():
+    assert flatten({"a": 1, "b": 2}) == {"a": 1, "b": 2}
+
+
+def test_flatten_nested():
+    assert flatten({"db": {"host": "x", "port": 5432}}) == {
+        "db.host": "x",
+        "db.port": 5432,
+    }
+
+
+def test_flatten_deep():
+    assert flatten({"a": {"b": {"c": 1}}}) == {"a.b.c": 1}
+
+
+def test_flatten_custom_sep():
+    assert flatten({"a": {"b": 1}}, sep="/") == {"a/b": 1}
+
+
+def test_flatten_empty_dict():
+    assert flatten({}) == {}
+
+
+def test_flatten_does_not_descend_into_lists():
+    assert flatten({"a": [1, 2, 3]}) == {"a": [1, 2, 3]}
+
+
+def test_unflatten_simple():
+    assert unflatten({"a": 1, "b": 2}) == {"a": 1, "b": 2}
+
+
+def test_unflatten_nested():
+    assert unflatten({"db.host": "x", "db.port": 5432}) == {
+        "db": {"host": "x", "port": 5432}
+    }
+
+
+def test_unflatten_deep():
+    assert unflatten({"a.b.c": 1}) == {"a": {"b": {"c": 1}}}
+
+
+def test_unflatten_custom_sep():
+    assert unflatten({"a/b": 1}, sep="/") == {"a": {"b": 1}}
+
+
+def test_flatten_unflatten_round_trip():
+    original = {"db": {"host": "x", "port": 5432}, "debug": True}
+    assert unflatten(flatten(original)) == original
+
+
+def test_unflatten_conflict_raises():
+    with pytest.raises(ValueError):
+        unflatten({"a": 1, "a.b": 2})
+
+
+def test_merge_with_flatten():
+    a = flatten({"db": {"host": "x", "port": 5432}})
+    b = flatten({"db": {"port": 3306}})
+    merged = merge(a, b)
+    assert unflatten(merged) == {"db": {"host": "x", "port": 3306}}

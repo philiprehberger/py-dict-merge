@@ -52,6 +52,23 @@ merge(
 # {"a": 4, "b": 5}
 ```
 
+### Flatten and unflatten
+
+Convert between nested dicts and dot-notation flat dicts. Useful when merging config that arrives in different shapes.
+
+```python
+from philiprehberger_dict_merge import flatten, unflatten
+
+flatten({"db": {"host": "x", "port": 5432}})
+# {"db.host": "x", "db.port": 5432}
+
+unflatten({"db.host": "x", "db.port": 5432})
+# {"db": {"host": "x", "port": 5432}}
+
+# Round-trip
+unflatten(flatten({"a": {"b": {"c": 1}}})) == {"a": {"b": {"c": 1}}}
+```
+
 ## API
 
 | Function / Class | Description |
@@ -63,6 +80,8 @@ merge(
 | `Strategy.CALLBACK` | Resolve conflicts via `on_conflict(key, left, right)` |
 | `MergeConflictError` | Raised by `Strategy.ERROR` — has `.key`, `.left`, `.right` attributes |
 | List strategies: `"replace"`, `"append"`, `"unique"`, `"concat"` | List merge modes |
+| `flatten(d, sep=".")` | Flatten a nested dict into separator-joined keys |
+| `unflatten(d, sep=".")` | Reverse of `flatten` — expand separator-joined keys into nested dicts |
 
 ## Development
 

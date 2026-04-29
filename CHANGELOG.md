@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0 (2026-04-28)
+
+- Add `flatten(d, sep=".")` and `unflatten(d, sep=".")` helpers for converting between nested and dot-notation flat dicts
+- `unflatten` raises `ValueError` on path conflicts (e.g. mixing `"a"` and `"a.b"`)
+- Fix `pyproject.toml` description to end with a period (matches README one-liner)
+
 ## 0.2.0 (2026-04-27)
 
 - Add `Strategy.CALLBACK` and `on_conflict` callable parameter to `merge()` for custom per-key conflict resolution

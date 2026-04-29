@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "philiprehberger-dict-merge"
-version = "0.2.0"
-description = "Deep merge dictionaries safely with conflict resolution"
+version = "0.3.0"
+description = "Deep merge dictionaries safely with conflict resolution."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"

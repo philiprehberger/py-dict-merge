@@ -11,6 +11,8 @@ __all__ = [
     "merge",
     "Strategy",
     "MergeConflictError",
+    "flatten",
+    "unflatten",
 ]
 
 
@@ -113,6 +115,69 @@ def _merge_into(
             case Strategy.CALLBACK:
                 assert on_conflict is not None  # validated in merge()
                 target[key] = copy.deepcopy(on_conflict(full_key, target_value, source_value))
+
+
+def flatten(data: dict[str, Any], sep: str = ".") -> dict[str, Any]:
+    """Flatten a nested dict into one with separator-joined keys.
+
+    Args:
+        data: Nested dictionary to flatten.
+        sep: Separator joining nested keys (default ``"."``).
+
+    Returns:
+        A flat dict where nested paths become single keys joined by *sep*.
+        Non-dict values are kept as-is; lists are not descended into.
+    """
+    result: dict[str, Any] = {}
+
+    def _walk(d: dict[str, Any], prefix: str) -> None:
+        for key, value in d.items():
+            full_key = f"{prefix}{sep}{key}" if prefix else key
+            if isinstance(value, dict):
+                _walk(value, full_key)
+            else:
+                result[full_key] = value
+
+    _walk(data, "")
+    return result
+
+
+def unflatten(data: dict[str, Any], sep: str = ".") -> dict[str, Any]:
+    """Reverse of :func:`flatten` — expand separator-joined keys into nested dicts.
+
+    Args:
+        data: Flat dictionary with separator-joined keys.
+        sep: Separator that joins key segments (default ``"."``).
+
+    Returns:
+        A nested dictionary.
+
+    Raises:
+        ValueError: If a key conflicts with an existing non-dict value
+            during expansion (e.g. ``{"a": 1, "a.b": 2}``).
+    """
+    result: dict[str, Any] = {}
+    for key, value in data.items():
+        parts = key.split(sep)
+        target = result
+        for part in parts[:-1]:
+            existing = target.get(part)
+            if existing is None:
+                target[part] = {}
+                target = target[part]
+            elif isinstance(existing, dict):
+                target = existing
+            else:
+                raise ValueError(
+                    f"Cannot unflatten: key {key!r} conflicts with existing value at {part!r}"
+                )
+        last = parts[-1]
+        if last in target and isinstance(target[last], dict) and not isinstance(value, dict):
+            raise ValueError(
+                f"Cannot unflatten: key {key!r} conflicts with existing nested dict"
+            )
+        target[last] = value
+    return result
 
 
 def _merge_lists(left: list, right: list, strategy: str) -> list:
